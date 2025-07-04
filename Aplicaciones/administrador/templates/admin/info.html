@@ -1,0 +1,485 @@
+{% extends 'plantilla.html' %}
+{% load static %}
+
+{% block body %}
+
+<div class="container">
+    <div class="page-inner">
+        <div class="page-header">
+            <button class="btn btn-primary btn-round mb-3" onclick="history.back()">
+                <i class="fa fa-arrow-left"></i> Volver
+            </button>
+            <ul class="breadcrumbs mb-3">
+                <li class="nav-home">
+                    <a href="#">
+                        <i class="icon-home"></i>
+                    </a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Tabla</a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Datos</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-title mb-0">Información del equipo</div>
+                <div>
+                    <button
+                        type="button"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editEquipoModal"
+                        class="btn btn-link btn-primary btn-lg edit-btn"
+                        title="Editar"
+                        data-id="{{ equipo.id }}"
+                    >
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-link btn-danger btn-lg delete-btn"
+                        title="Eliminar"
+                        data-id="{{ equipo.id }}"
+                    >
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-lg-6 mb-4 mb-lg-0">
+                        <h2>Información del equipo: <span id="info-nombre">{{ equipo.nombre }}</span></h2>
+                        <ul>
+                            <li>Tipo: <span id="info-tipo">{{ equipo.tipo }}</span></li>
+                            <li>Marca: <span id="info-marca">{{ equipo.marca }}</span></li>
+                            <li>Modelo: <span id="info-modelo">{{ equipo.modelo }}</span></li>
+                            <li>Serie: <span id="info-serie">{{ equipo.serie }}</span></li>
+                            <li>Ubicación: <span id="info-ubicacion">{{ equipo.ubicacion }}</span></li>
+                            <li>Fecha de adquisición: <span id="info-fecha">{{ equipo.fecha_adquisicion|date:"Y-m-d" }}</span></li>
+                            <li>Estado:
+                                <span id="info-estado">
+                                    {% if equipo.estado_operativo == "Activo" %}
+                                    <span class="badge bg-success">Activo</span>
+                                    {% elif equipo.estado_operativo == "Inactivo" %}
+                                    <span class="badge bg-secondary">Inactivo</span>
+                                    {% elif equipo.estado_operativo == "En reparación" %}
+                                    <span class="badge bg-warning text-dark">En reparación</span>
+                                    {% elif equipo.estado_operativo == "Obsoleto" %}
+                                    <span class="badge bg-dark">Obsoleto</span>
+                                    {% elif equipo.estado_operativo == "Retirado" %}
+                                    <span class="badge bg-danger">Retirado</span>
+                                    {% else %}
+                                    <span class="badge bg-light text-dark">{{ equipo.estado_operativo }}</span>
+                                    {% endif %}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <h5>Resumen de mantenimientos</h5>
+                        <select id="filtroGraficaMantenimiento" class="form-select form-select-sm mb-2" style="max-width: 250px;">
+                        <option value="tipo">Por tipo</option>
+                        <option value="realizada">Por estado de realización</option>
+                        </select>
+                        <div style="height: 300px;">
+                            <canvas id="graficaMantenimiento"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center" style="background-color:rgb(6, 62, 117); border-radius: 0.5rem 0.5rem 0 0;">
+                        <div class="card-title mb-0" style="color: white;">Mantenimiento</div>
+                        <button
+                            class="btn btn-primary btn-round ms-auto"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addMantenimiento"
+                            >
+                                <i class="fa fa-plus"></i>
+                                        Nuevo
+                            </button>
+                    </div>
+                    <div class="card-body">
+                        <table 
+                        id="mantenimientoTable"
+                        class="display table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tipo</th>
+                                    <th>Fecha programada</th>
+                                    <th>Fecha realizada</th>
+                                    <th>Responsable</th>
+                                    <th>Observaciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                        
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center" style="background-color:rgb(3, 33, 62); border-radius: 0.5rem 0.5rem 0 0;">
+                        <div class="card-title mb-0" style="color: white;">Historia de Operatividad</div>
+                        <button
+                            class="btn btn-primary btn-round ms-auto"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addHistorial"
+                            >
+                                <i class="fa fa-plus"></i>
+                                        Nuevo
+                            </button>
+
+                    </div>
+                    <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table 
+                        id="historialTable"
+                        class="display table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Fecha y hora</th>
+                                    <th>Estado operativo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                        
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+
+
+<!-- Modal para editar equipos -->
+ <div class="modal fade" id="editEquipoModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title">
+          <span class="fw-mediumbold"> Editar</span>
+          <span class="fw-light"> equipo </span>
+        </h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="small">
+          Edita un equipo en la lista. Puedes editar los campos
+        </p>
+        <form id="editEquipoForm" novalidate>
+          <div class="row">
+            <input type="hidden" id="editId" name="editId">
+            <div class="col-sm-12">
+              <div class="form-group form-group-default">
+                <label>Nombre</label>
+                <input id="editNombre" name="editNombre" type="text" class="form-control" placeholder="Rellena el nombre" required />
+              </div>
+            </div>
+            <div class="col-md-6 pe-0">
+              <div class="form-group form-group-default">
+                <label>Tipo</label>
+                <input id="editTipo" name="editTipo" type="text" class="form-control" placeholder="Rellena el tipo" required />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group form-group-default">
+                <label>Marca</label>
+                <input id="editMarca" name="editMarca" type="text" class="form-control" placeholder="Rellena la marca" required />
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group form-group-default">
+                <label>Modelo</label>
+                <input id="editModelo" name="editModelo" type="text" class="form-control" placeholder="Rellena el modelo" required />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group form-group-default">
+                <label>Serie</label>
+                <input id="editSerie" name="editSerie" type="text" class="form-control" placeholder="Rellena la serie" required />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group form-group-default">
+                <label>Ubicación</label>
+                <input id="editUbicacion" name="editUbicacion" type="text" class="form-control" placeholder="Rellena la ubicación" required />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group form-group-default">
+                <label>Fecha de adquisición</label>
+                <input id="editFechaAdquisicion" name="editFechaAdquisicion" type="date" class="form-control" required />
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group form-group-default">
+                <label>Estado</label>
+                <select class="form-select" id="editEstadoOperativo" name="editEstadoOperativo" required>
+                  <option value="">Selecciona un estado</option>
+                  <option value="Activo">Activo</option>
+                  <option value="Inactivo">Inactivo</option>
+                  <option value="En reparación">En reparación</option>
+                  <option value="Obsoleto">Obsoleto</option>
+                  <option value="Retirado">Retirado</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="submit" id="addRowButton" class="btn btn-primary">Guardar</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal para añadir mantenimiento -->
+<div class="modal fade" id="addMantenimiento" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title">
+          <span class="fw-mediumbold"> Añadir</span>
+          <span class="fw-light"> mantenimiento </span>
+        </h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="small">
+          Añade un nuevo mantenimiento al equipo.
+        </p>
+        <form id="addMantenimientoForm" novalidate>
+          <div class="row">
+            <input type="hidden" id="equipoId" name="equipoId" value="{{ equipo.id }}">
+            <div class="col-md-12">
+                <div class="form-group form-group-default">
+                    <label>Tipo</label>
+                    <select class="form-select" id="tipo" name="tipo" required>
+                        <option value="">Selecciona un tipo</option>
+                        <option value="Preventivo">Preventivo</option>
+                        <option value="Correctivo">Correctivo</option>
+                        <option value="Predictivo">Predictivo</option>
+                        </select>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group form-group-default">
+                    <label>Fecha Programada</label>
+                    <input id="fechaProgramada" name="fechaProgramada" type="date" class="form-control" required />
+                </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group form-group-default">
+                <label>Tecnico Responsable</label>
+                <input id="tecnico" name="tecnico" type="text" class="form-control" placeholder="Responsable del mantenimiento" required />
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group form-group-default">
+                <label>Observaciones</label>
+                <input id="observaciones" name="observaciones" type="text" class="form-control" placeholder="Observaciones del mantenimiento" required />
+              </div>
+            </div>
+            
+            <div class="modal-footer border-0">
+                <button type="submit" id="addMantenimientoButton" class="btn btn-primary">Añadir</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </form>
+        </div>
+    </div>
+    </div>
+</div>
+</div>
+<!-- Modal editar mantenimiento -->
+<div class="modal fade" id="editMantenimiento" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title">
+          <span class="fw-mediumbold"> Editar</span>
+          <span class="fw-light"> mantenimiento </span>
+        </h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="small">
+            Edita el mantenimiento del equipo.
+        </p>
+        <form id="EditMantenimientoForm" novalidate>
+          <div class="row">
+            <input type="hidden" id="mantenimientoId" name="mantenimientoId" value="{{ mantenimiento.id }}">
+            <div class="col-md-12">
+                <div class="form-group form-group-default">
+                    <label>Tipo</label>
+                    <select class="form-select" id="editTipoMantenimiento" name="editTipoMantenimiento" required>
+                        <option value="">Selecciona un tipo</option>
+                        <option value="Preventivo">Preventivo</option>
+                        <option value="Correctivo">Correctivo</option>
+                        <option value="Predictivo">Predictivo</option>
+                        </select>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group form-group-default">
+                    <label>Fecha Programada</label>
+                    <input id="editFechaProgramada" name="editFechaProgramada" type="date" class="form-control" required />
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group form-group-default">
+                    <label>Fecha Realizada</label>
+                    <input id="editFechaRealizada" name="editFechaRealizada" type="date" class="form-control" required />
+                </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group form-group-default">
+                <label>Tecnico Responsable</label>
+                <input id="editTecnico" name="editTecnico" type="text" class="form-control" placeholder="Responsable del mantenimiento" required />
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group form-group-default">
+                <label>Observaciones</label>
+                <input id="editObservaciones" name="editObservaciones" type="text" class="form-control" placeholder="Observaciones del mantenimiento" required />
+              </div>
+            </div>
+            
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-danger delete-mantenimiento" data-bs-dismiss="modal" data-id="{{ mantenimiento.id }}">Eliminar Dato</button>
+                <button type="submit" id="editMantenimientoButton" class="btn btn-primary">Editar</button>
+                
+            </div>
+        </form>
+        </div>
+    </div>
+    </div>
+</div>
+</div>
+
+<!-- Modal para añadir historial de operatividad -->
+<div class="modal fade" id="addHistorial" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title">
+          <span class="fw-mediumbold"> Añadir</span>
+          <span class="fw-light"> historial de operatividad </span>
+        </h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="small">
+            Añade un nuevo registro de operatividad al equipo.
+        </p>
+        <form id="addHistorialForm" novalidate>
+          <div class="row">
+            <input type="hidden" id="equipoId" name="equipoId" value="{{ equipo.id }}">
+            <div class="col-md-12">
+                <div class="form-group form-group-default">
+                    <label>Fecha y Hora</label>
+                    <input id="fechaHora" name="fechaHora" type="datetime-local" class="form-control" required />
+                </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group form-group-default">
+                <label>Estado Operativo</label>
+                <select class="form-select" id="estadoOperativo" name="estadoOperativo" required>
+                  <option value="">Selecciona un estado</option>
+                  <option value="Activo">Activo</option>
+                  <option value="Inactivo">Inactivo</option>
+                  <option value="En reparación">En reparación</option>
+                  <option value="Obsoleto">Obsoleto</option>
+                  <option value="Retirado">Retirado</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="submit" id="addHistorialButton" class="btn btn-primary">Añadir</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </form>
+        </div>
+    </div>
+    </div>
+</div>
+</div>
+<!-- Modal editar historial de operatividad -->
+<div class="modal fade" id="editHistorial" tabindex="-1" role="dialog
+" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title">
+          <span class="fw-mediumbold"> Editar</span>
+          <span class="fw-light"> historial de operatividad </span>
+        </h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="small">
+            Edita el registro de operatividad del equipo.
+        </p>
+        <form id="editHistorialForm" novalidate>
+          <div class="row">
+            <input type="hidden" id="historialId" name="historialId" >
+            <div class="col-md-12">
+                <div class="form-group form-group-default">
+                    <label>Fecha y Hora</label>
+                    <input id="editFechaHora" name="editFechaHora" type="datetime-local" class="form-control" required />
+                </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group form-group-default">
+                <label>Estado Operativo</label>
+                <select class="form-select" id="editEstadoOperativo" name="editEstadoOperativo" required>
+                  <option value="">Selecciona un estado</option>
+                  <option value="Activo">Activo</option>
+                  <option value="Inactivo">Inactivo</option>
+                  <option value="En reparación">En reparación</option>
+                  <option value="Obsoleto">Obsoleto</option>
+                  <option value="Retirado">Retirado</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-danger delete-historial" data-bs-dismiss="modal" data-id="{{ historial.id }}">Eliminar Dato</button>
+                <button type="submit" id="editHistorialButton" class="btn btn-primary">Editar</button>
+            </div>
+        </form>
+        </div>
+    </div>
+    </div>
+</div>
+</div>
+
+{% endblock %}

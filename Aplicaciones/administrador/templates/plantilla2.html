@@ -1,0 +1,691 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Inventariado</title>
+    <meta
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+      name="viewport"
+    />
+    <link
+      rel="icon"
+      href="{% static 'styles/assets/img/kaiadmin/favicon.ico' %}"
+      type="image/x-icon"
+    />
+
+    <!-- Fonts and icons -->
+    <script src="{% static 'styles/assets/js/plugin/webfont/webfont.min.js' %}"></script>
+    <script>
+      WebFont.load({
+        google: { families: ["Public Sans:300,400,500,600,700"] },
+        custom: {
+          families: [
+            "Font Awesome 5 Solid",
+            "Font Awesome 5 Regular",
+            "Font Awesome 5 Brands",
+            "simple-line-icons",
+          ],
+          urls: ["{% static 'styles/assets/css/fonts.min.css' %}"],
+        },
+        active: function () {
+          sessionStorage.fonts = true;
+        },
+      });
+    </script>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{% static 'styles/assets/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/assets/css/plugins.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/assets/css/kaiadmin.min.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'styles/assets/css/demo.css' %}" />
+    <style>
+        .dataTables_filter,
+        .dataTables_length {
+            display: none !important;
+        }
+    </style>
+  </head>
+  <body>
+    
+    <div class="wrapper">
+      <!-- Sidebar -->
+      <div class="sidebar" data-background-color="dark">
+        <div class="sidebar-logo">
+          <!-- Logo Header -->
+          <div class="logo-header" data-background-color="dark">
+            <a href="{% url 'inicio' %}" class="logo">
+              <h1 class="text-white">Inventariado</h1>
+            </a>
+            <div class="nav-toggle">
+              <button class="btn btn-toggle toggle-sidebar">
+                <i class="gg-menu-right"></i>
+              </button>
+              <button class="btn btn-toggle sidenav-toggler">
+                <i class="gg-menu-left"></i>
+              </button>
+            </div>
+            <button class="topbar-toggler more">
+              <i class="gg-more-vertical-alt"></i>
+            </button>
+          </div>
+          <!-- End Logo Header -->
+        </div>
+        <div class="sidebar-wrapper scrollbar scrollbar-inner">
+          <div class="sidebar-content">
+            <ul class="nav nav-secondary">
+              <li class="nav-item">
+                <a href="{% url 'inicio2' %}">
+                  <i class="fas fa-home"></i>
+                  <p>Inicio</p>
+                  
+                </a>
+              </li>
+              <li class="nav-section">
+                <span class="sidebar-mini-icon">
+                  <i class="fa fa-ellipsis-h"></i>
+                </span>
+                <h4 class="text-section">Opciones</h4>
+              </li>
+               <li class="nav-item">
+                <a href="{% url 'equipo_tecnico' %}">
+                  <i class="fas fa-desktop"></i>
+                  <p>Equipos</p>
+                  <span class="badge badge-success"></span>
+                </a>
+              </li> 
+              <li class="nav-item">
+                <a href="{% url 'perfil_usuario_tecnico' %}">
+                  <i class="fas fa-user"></i>
+                  <p>Perfil</p>
+                  <span class="badge badge-success"></span>
+                </a>
+              </li> 
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- End Sidebar -->
+
+      <div class="main-panel">
+        <div class="main-header"style="background-color:rgb(1, 25, 49);">
+          <div class="main-header-logo">
+            <!-- Logo Header -->
+            <div class="logo-header" data-background-color="dark">
+              <a href="index.html" class="logo">
+                <img
+                  src="assets/img/kaiadmin/logo_light.svg"
+                  alt="navbar brand"
+                  class="navbar-brand"
+                  height="20"
+                />
+              </a>
+              <div class="nav-toggle">
+                <button class="btn btn-toggle toggle-sidebar">
+                  <i class="gg-menu-right"></i>
+                </button>
+                <button class="btn btn-toggle sidenav-toggler">
+                  <i class="gg-menu-left"></i>
+                </button>
+              </div>
+              <button class="topbar-toggler more">
+                <i class="gg-more-vertical-alt"></i>
+              </button>
+            </div>
+            <!-- End Logo Header -->
+          </div>
+          <!-- Navbar Header -->
+          <nav
+            class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom"
+          >
+            <div class="container-fluid">
+              <nav
+                class="navbar navbar-header-left navbar-expand-lg navbar-form nav-search p-0 d-none d-lg-flex"
+              >
+                
+              </nav>
+
+              <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
+                <li
+                  class="nav-item topbar-icon dropdown hidden-caret d-flex d-lg-none"
+                >
+                  
+                  
+                </li>
+                
+                <li class="nav-item topbar-user dropdown hidden-caret">
+                  <a
+                    class="dropdown-toggle profile-pic"
+                    data-bs-toggle="dropdown"
+                    href="#"
+                    aria-expanded="false"
+                  >
+                    <div class="avatar-sm">
+                        {% if user %}
+                            <div class="avatar-img rounded-circle d-flex align-items-center justify-content-center"
+                                style="background: #1d7af3; color: #fff; width: 40px; height: 40px; font-size: 1.5rem; font-weight: bold;">
+                            {{ user.nombre|first|upper }}
+                            </div>
+                        {% else %}
+                            <img src="{% static 'styles/assets/img/profile.jpg' %}" alt="..." class="avatar-img rounded-circle" />
+                        {% endif %}
+                    </div>
+                    <span class="profile-username" style="color: white;">
+                      <span class="op-7">Hola,</span>
+                      <span class="fw-bold">{{ user.nombre }}</span>
+                    </span>
+                  </a>
+                  <ul class="dropdown-menu dropdown-user animated fadeIn">
+                    <div class="dropdown-user-scroll scrollbar-outer">
+                      <li>
+                        <div class="user-box">
+                          <div class="avatar-lg">
+                            {% if user %}
+                            <div class="avatar-img rounded-circle d-flex align-items-center justify-content-center"
+                                style="background: #1d7af3; color: #fff; width: 40px; height: 40px; font-size: 1.5rem; font-weight: bold;">
+                            {{ user.nombre|first|upper }}
+                            </div>
+                            {% else %}
+                                <img src="{% static 'styles/assets/img/profile.jpg' %}" alt="..." class="avatar-img rounded-circle" />
+                            {% endif %}
+                          </div>
+                          <div class="u-text">
+                            <h4>Hola, {{ user.nombre }}</h4>
+                            <p class="text-muted">{{ user.correo }}</p>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'perfil_usuario_tecnico' %}">Perfil</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'login' %}">Cerrar sesión</a>
+                      </li>
+                    </div>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </nav>
+          <!-- End Navbar -->
+        </div>
+
+       {% block body %}
+       {% endblock  %}
+
+      
+
+      
+      <!-- End Custom template -->
+    </div>
+    <!--   Core JS Files   -->
+    <script src="{% static 'styles/assets/js/core/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static 'styles/assets/js/core/popper.min.js' %}"></script>
+    <script src="{% static 'styles/assets/js/core/bootstrap.min.js' %}"></script>
+
+    <!-- jQuery Scrollbar -->
+    <script src="{% static 'styles/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js' %}"></script>
+
+    <!-- Chart JS -->
+    <script src="{% static 'styles/assets/js/plugin/chart.js/chart.min.js' %}"></script>
+
+    <!-- jQuery Sparkline -->
+    <script src="{% static 'styles/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js' %}"></script>
+
+    <!-- Chart Circle -->
+    <script src="{% static 'styles/assets/js/plugin/chart-circle/circles.min.js' %}"></script>
+
+    <!-- Datatables -->
+    <script src="{% static 'styles/assets/js/plugin/datatables/datatables.min.js' %}"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css"/>
+    <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
+    <!-- Bootstrap Notify -->
+    <script src="{% static 'styles/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js' %}"></script>
+
+    <!-- jQuery Vector Maps -->
+    <script src="{% static 'styles/assets/js/plugin/jsvectormap/jsvectormap.min.js' %}"></script>
+    <script src="{% static 'styles/assets/js/plugin/jsvectormap/world.js' %}"></script>
+
+    <!-- Sweet Alert -->
+    <script src="{% static 'styles/assets/js/plugin/sweetalert/sweetalert.min.js' %}"></script>
+
+    <!-- Kaiadmin JS -->
+    <script src="{% static 'styles/assets/js/kaiadmin.min.js' %}"></script>
+
+
+    <script>
+        
+    $(document).ready(function () {
+        $.extend(true, $.fn.dataTable.defaults, {
+            language: {
+                "decimal":        "",
+                "emptyTable":     "No hay datos disponibles en la tabla",
+                "info":           "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "infoEmpty":      "Mostrando 0 a 0 de 0 registros",
+                "infoFiltered":   "(filtrado de _MAX_ registros totales)",
+                "loadingRecords": "Cargando...",
+                "processing":     "Procesando...",
+                "zeroRecords":    "No se encontraron registros coincidentes",
+                "paginate": {
+                    "first":      "Primero",
+                    "last":       "Último",
+                    "next":       "Siguiente",
+                    "previous":   "Anterior"
+                },
+                "aria": {
+                    "sortAscending":  ": activar para ordenar la columna ascendente",
+                    "sortDescending": ": activar para ordenar la columna descendente"
+                },
+                
+            }
+        }); 
+        var pieChartElem = document.getElementById('pieChart');
+        var myPieChart;
+        if (pieChartElem) {
+            var ctx = pieChartElem.getContext('2d');
+            function cargarGraficaTipo() {
+                $.ajax({
+                    url: "{% url 'chart_data' %}",
+                    success: function(response) {
+                        if (myPieChart) myPieChart.destroy();
+                        myPieChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: response.labels,
+                                datasets: [{
+                                    data: response.data,
+                                    backgroundColor: response.colores,
+                                    borderWidth: 1,
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        display: false,
+                                    },
+                                    title:{display:false
+                                    },
+                                    tooltip:{display:false}
+                                },
+                                layout: {
+                                    padding: {
+                                        left: 20,
+                                        right: 20,
+                                        top: 20,
+                                        bottom: 20,
+                                    },
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+            // Inicializa la gráfica solo por estado_operativo
+            cargarGraficaTipo();
+        }
+
+        // Gráfica de mantenimientos por equipo (pieChartMantenimiento)
+        var pieChartMantenimientoElem = document.getElementById('graficaMantenimiento');
+        var myPieChartMantenimiento;
+        if (pieChartMantenimientoElem) {
+            var ctx2 = pieChartMantenimientoElem.getContext('2d');
+            function cargarGraficaMantenimiento(filtro) {
+                var equipoId = $('#equipoId').val();
+                $.ajax({
+                    url: "{% url 'chart_mantenimiento_equipo' %}",
+                    data: { equipo_id: equipoId, filtro: filtro },
+                    success: function(response) {
+                        if (myPieChartMantenimiento) myPieChartMantenimiento.destroy();
+                        myPieChartMantenimiento = new Chart(ctx2, {
+                            type: 'pie',
+                            data: {
+                                labels: response.labels,
+                                datasets: [{
+                                    data: response.data,
+                                    backgroundColor: response.colores,
+                                    borderWidth: 0
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: "left",
+                                        labels: {
+                                            color: "rgb(154, 154, 154)",
+                                            font: { size: 11 },
+                                            usePointStyle: true,
+                                            padding: 20,
+                                        },
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+            // Inicializa con el filtro por defecto
+            cargarGraficaMantenimiento('tipo');
+            // Cambia el gráfico al cambiar el filtro
+            $('#filtroGraficaMantenimiento').on('change', function() {
+                cargarGraficaMantenimiento(this.value);
+            });
+        }
+        function loadEquipos() {
+        // Filtro personalizado para la columna de fecha (colIdx == 6)
+        $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(function() { return true; }); // Limpia filtros previos
+        $.fn.dataTable.ext.search.push(
+            function(settings, data, dataIndex) {
+                var colIdx = $('#campoFiltro').val();
+                if (colIdx != 7) return true; // Solo aplica si es la columna de fecha
+                var filtro = $('#valorFiltro').val();
+                if (!filtro) return true;
+                var valorTabla = data[7];
+                if (!valorTabla) return false;
+                // Intenta extraer yyyy-mm-dd de la celda (ajusta según tu formato real)
+                // Si tus fechas ya están en yyyy-mm-dd, esto basta:
+                return valorTabla === filtro;
+            }
+        );
+        $('#editarPerfilForm').on('submit', function(event) {
+    event.preventDefault();
+    $.ajax({
+        url: "{% url 'perfil_editar_tecnico' %}",
+        method: "POST",
+        data: $(this).serialize(),
+        success: function(response) {
+            if (response.status === 'success') {
+                swal({
+                    title: "¡Éxito!",
+                    text: response.message,
+                    icon: "success",
+                    button: {
+                        text: "OK",
+                        className: "btn btn-success"
+                    }
+                }).then(function() {
+                    location.reload();
+                });
+            } else {
+                swal({
+                    title: "Error",
+                    text: response.message,
+                    icon: "error",
+                    button: {
+                        text: "OK",
+                        className: "btn btn-danger"
+                    }
+                });
+            }
+        },
+        error: function() {
+            swal({
+                title: "Error",
+                text: "Ocurrió un error inesperado.",
+                icon: "error",
+                button: {
+                    text: "OK",
+                    className: "btn btn-danger"
+                }
+            });
+        }
+    });
+});
+        $.ajax({
+            url: '{% url "equipo_list_tecnico" %}',
+            method: 'GET',
+            success: function(response) {
+                $('#equipoTable').DataTable().destroy();
+                $('#equipoTable tbody').html(response.html);
+
+                var table = $('#equipoTable').DataTable({
+                    pageLength: 5,
+                    scrollX: true,
+                    fixedColumns: {
+                        leftColumns: 2,
+                        rightColumns: 0
+                    },
+                });
+
+                // Función para llenar el segundo select según el campo elegido
+                function actualizarValoresFiltro() {
+                    var colIdx = $('#campoFiltro').val();
+                    var select = $('#valorFiltro');
+                    select.off().empty(); // Limpia y quita eventos previos
+
+                    if (colIdx == 7) {
+                        // Si es la columna de fecha, usa input type date
+                        select.replaceWith('<input type="date" id="valorFiltro" class="form-control form-control-sm" />');
+                        $('#valorFiltro').off('change').on('change', function () {
+                            table.draw(); // El filtro personalizado se encarga
+                        });
+                    } else {
+                        // Si es cualquier otro campo, usa select
+                        if (!select.is('select')) {
+                            select.replaceWith('<select id="valorFiltro" class="form-select form-select-sm"><option value="">Todos</option></select>');
+                            select = $('#valorFiltro');
+                        }
+                        select.empty().append('<option value="">Todos</option>');
+                        table.column(colIdx).nodes().to$().each(function () {
+                            var text = $(this).text().trim();
+                            if (text && select.find('option[value="' + text + '"]').length === 0) {
+                                select.append('<option value="' + text + '">' + text + '</option>');
+                            }
+                        });
+                        select.off('change').on('change', function () {
+                            var val = $(this).val();
+                            table.columns().search('');
+                            if (val) {
+                                table.column(colIdx)
+                                    .search('^' + val + '$', true, false)
+                                    .draw();
+                            } else {
+                                table.column(colIdx).search('').draw();
+                            }
+                        });
+                    }
+                }
+
+                // Al cambiar el campo, actualiza los valores posibles
+                $('#campoFiltro').off('change').on('change', function () {
+                    actualizarValoresFiltro();
+                    $('#valorFiltro').val('');
+                    table.columns().search('');
+                    table.draw();
+                });
+
+                // Al cambiar el valor, filtra la tabla (excepto fecha, que usa filtro personalizado)
+                $('#valorFiltro').off('change').on('change', function () {
+                    var colIdx = $('#campoFiltro').val();
+                    if (colIdx == 6) {
+                        table.draw(); // El filtro personalizado se encarga
+                    }
+                });
+
+                // Buscar en toda la tabla con el input personalizado
+                $('#customSearch').off('keyup').on('keyup', function () {
+                    table.search(this.value).draw();
+                });
+
+                // Inicializa los valores del filtro al cargar
+                actualizarValoresFiltro();
+            }
+        });
+        }
+        loadEquipos();
+
+
+        function confirmarAccion({title, text, confirmText, confirmClass, onConfirm}) {
+            swal({
+                title: title,
+                text: text,
+                icon: "warning",
+                buttons: {
+                    cancel: {
+                        visible: true,
+                        text: "No, cancelar",
+                        className: "btn btn-danger",
+                    },
+                    confirm: {
+                        text: confirmText,
+                        className: confirmClass,
+                    },
+                },
+            }).then((willDo) => {
+                if (willDo && typeof onConfirm === "function") {
+                    onConfirm();
+                } else {
+                    swal({
+                        title: "Cancelado",
+                        text: "El registro está a salvo.",
+                        icon: "info",
+                        button: {
+                            text: "OK",
+                            className: "btn btn-success"
+                        }
+                    });
+                }
+            });
+        }
+
+
+
+        // Cargar mantenimientos
+        function loadMantenimientos() {
+            var equipoId = $('#equipoId').val(); // Asegúrate de tener este input oculto en tu template info.html
+
+            $.ajax({
+                url: '{% url "mantenimiento_list_tecnico" %}',
+                method: 'GET',
+                data: { equipo_id: equipoId },  // Envía el ID del equipo
+                success: function(response) {
+                    $('#mantenimientoTable').DataTable().destroy();
+                    $('#mantenimientoTable tbody').html(response.html);
+                    $('#mantenimientoTable').DataTable({
+                        pageLength: 5,
+                        scrollX: true,
+                    });
+                }
+            });
+        }
+        loadMantenimientos();
+        
+
+        $(document).on('click', '.edit-mantenimiento', function() {
+            var id = $(this).data('id');
+            $.ajax({
+                url: '{% url "mantenimiento_id_tecnico" %}',
+                method: 'GET',
+                data: { id: id },
+                success: function(data) {
+                    // Llena los datos informativos
+                    $('#infoIdMantenimiento').text(data.id);
+                    $('#infoTipoMantenimiento').text(data.tipo);
+                    $('#infoFechaProgramada').text(data.fecha_programada);
+                    $('#infoFechaRealizada').html(data.fecha_realizada ? data.fecha_realizada : '<span class="text-danger">No realizada</span>');
+                    $('#infoTecnico').text(data.tecnico);
+                    $('#infoObservaciones').text(data.observaciones);
+
+                    // Botones
+                    if (!data.fecha_realizada) {
+                        $('#marcarRealizadaBtn').removeClass('d-none').attr('data-id', data.id);
+                        $('#marcarNoRealizadaBtn').addClass('d-none');
+                    } else {
+                        $('#marcarNoRealizadaBtn').removeClass('d-none').attr('data-id', data.id);
+                        $('#marcarRealizadaBtn').addClass('d-none');
+                    }
+
+                    $('#editMantenimiento').modal('show');
+                }
+            });
+        });
+        
+        // Marcar como realizada
+        $(document).on('click', '#marcarRealizadaBtn', function() {
+            var id = $(this).data('id');
+            $.ajax({
+                url: '{% url "marcar_mantenimiento_realizado" %}',
+                method: 'POST',
+                data: {
+                    id: id,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        $('#editMantenimiento').modal('hide');
+                        loadMantenimientos();
+                        cargarGraficaMantenimiento('realizada');
+                        swal("¡Éxito!", response.message, "success");
+                    } else {
+                        swal("Error", response.message, "error");
+                    }
+                },
+                error: function() {
+                    swal("Error", "Ocurrió un error inesperado.", "error");
+                }
+            });
+        });
+
+        // Marcar como no realizada
+        $(document).on('click', '#marcarNoRealizadaBtn', function() {
+            var id = $(this).data('id');
+            $.ajax({
+                url: '{% url "marcar_mantenimiento_no_realizado" %}',
+                method: 'POST',
+                data: {
+                    id: id,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        $('#editMantenimiento').modal('hide');
+                        loadMantenimientos();
+                        cargarGraficaMantenimiento('no_realizada');
+                        swal("¡Éxito!", response.message, "success");
+                    } else {
+                        swal("Error", response.message, "error");
+                    }
+                },
+                error: function() {
+                    swal("Error", "Ocurrió un error inesperado.", "error");
+                }
+            });
+        });
+        //opratividad historial
+        function loadHistorialOperatividad() {
+            var equipoId = $('#equipoId').val(); // Asegúrate de tener
+            // este input oculto en tu template info.html
+            $.ajax({
+                url: '{% url "historial_list_tecnico" %}',
+                method: 'GET',
+                data: { equipo_id: equipoId },  // Envía el ID del equipo
+                success: function(response) {
+                    $('#historialTable').DataTable().destroy();
+                    $('#historialTable tbody').html(response.html);
+                    $('#historialTable').DataTable({
+                        pageLength: 5,
+                        scrollX: true,
+                    });
+                }
+            });
+        }
+        loadHistorialOperatividad();
+        
+        
+
+
+
+        
+    });
+
+    
+    </script>
+    
+  </body>
+</html>

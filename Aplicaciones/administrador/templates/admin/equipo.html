@@ -1,0 +1,194 @@
+{% extends 'plantilla.html' %}
+{% load static %}
+
+{% block body %}
+
+        <div class="container">
+          <div class="page-inner">
+            <div class="page-header">
+              <h3 class="fw-bold mb-3">Lista de Equipos</h3>
+              <ul class="breadcrumbs mb-3">
+                <li class="nav-home">
+                  <a href="#">
+                    <i class="icon-home"></i>
+                  </a>
+                </li>
+                <li class="separator">
+                  <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                  <a href="#">Tabla</a>
+                </li>
+                <li class="separator">
+                  <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                  <a href="#">Datos</a>
+                </li>
+              </ul>
+            </div>
+              <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header" style="background-color:rgb(6, 62, 117); border-radius: 0.5rem 0.5rem 0 0;">
+                        <div class="d-flex align-items-center" >
+                            <h4 class="card-title" style="color: white;">Lista de equipos</h4>
+                            <button
+                            class="btn btn-primary btn-round ms-auto"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addRowModal"
+                            >
+                                <i class="fa fa-plus"></i>
+                                        Nuevo Equipo
+                            </button>
+                        </div>
+                    </div>
+                <div class="card-body">
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="row mb-2">
+                                <div class="col-md-3">
+                                    <label for="campoFiltro">Filtrar por campo:</label>
+                                    <select id="campoFiltro" class="form-select form-select-sm">
+                                    <option value="">Selecciona un campo</option>
+                                    <option value="1">Nombre</option>
+                                    <option value="2">Tipo</option>
+                                    <option value="3">Marca</option>
+                                    <option value="4">Modelo</option>
+                                    <option value="5">Serie</option>
+                                    <option value="6">Ubicación</option>
+                                    <option value="7">Fecha de compra</option>
+                                    <option value="8">Estado</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="valorFiltro">Valor:</label>
+                                    <select id="valorFiltro" class="form-select form-select-sm">
+                                    <option value="">Todos</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="customSearch">Buscar:</label>
+                                    <input type="text" id="customSearch" class="form-control form-control-sm" placeholder="Buscar en la tabla...">
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                
+                                <table
+                                    id="equipoTable"
+                                    class="display table table-striped table-hover"
+                                >
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 1vh"></th>
+                                            
+                                            <th>Nombre</th>
+                                            <th>Tipo</th>
+                                            <th>Marca</th>
+                                            <th>Modelo</th>
+                                            <th>Serie</th>
+                                            <th>Ubicación</th>
+                                            <th>Fecha de compra</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <!--se genera la tabla-->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+</div>
+<!-- Modal para añadir equipos -->
+ <div class="modal fade" id="addRowModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title">
+          <span class="fw-mediumbold"> Nuevo</span>
+          <span class="fw-light"> equipo </span>
+        </h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="small">
+          Añade un nuevo equipo a la lista. Puedes rellenar los campos
+        </p>
+        <form id="addEquipoForm" novalidate>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group form-group-default">
+                <label>Nombre</label>
+                <input id="nombre" name="nombre" type="text" class="form-control" placeholder="Rellena el nombre" required />
+              </div>
+            </div>
+            <div class="col-md-6 pe-0">
+              <div class="form-group form-group-default">
+                <label>Tipo</label>
+                <input id="tipo" name="tipo" type="text" class="form-control" placeholder="Rellena el tipo" required />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group form-group-default">
+                <label>Marca</label>
+                <input id="marca" name="marca" type="text" class="form-control" placeholder="Rellena la marca" required />
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group form-group-default">
+                <label>Modelo</label>
+                <input id="modelo" name="modelo" type="text" class="form-control" placeholder="Rellena el modelo" required />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group form-group-default">
+                <label>Serie</label>
+                <input id="serie" name="serie" type="text" class="form-control" placeholder="Rellena la serie" required />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group form-group-default">
+                <label>Ubicación</label>
+                <input id="ubicacion" name="ubicacion" type="text" class="form-control" placeholder="Rellena la ubicación" required />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group form-group-default">
+                <label>Fecha de adquisición</label>
+                <input id="fechaAdquisicion" name="fechaAdquisicion" type="date" class="form-control" required />
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group form-group-default">
+                <label>Estado</label>
+                <select class="form-select" id="estadoOperativo" name="estadoOperativo" required>
+                  <option value="">Selecciona un estado</option>
+                  <option value="Activo">Activo</option>
+                  <option value="Inactivo">Inactivo</option>
+                  <option value="En reparación">En reparación</option>
+                  <option value="Obsoleto">Obsoleto</option>
+                  <option value="Retirado">Retirado</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="submit" id="addRowButton" class="btn btn-primary">Añadir</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

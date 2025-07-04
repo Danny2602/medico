@@ -1,0 +1,64 @@
+{% extends "plantilla2.html" %}
+{% load static %}
+
+{% block body %}
+<div class="container">
+          <div class="page-inner">
+            <div class="page-header">
+              <h3 class="fw-bold mb-3">Lista de Equipos</h3>
+              <ul class="breadcrumbs mb-3">
+                <li class="nav-home">
+                  <a href="{% url 'inicio2' %}">
+                    <i class="icon-home"></i>
+                  </a>
+                </li>
+
+                <li class="separator">
+                  <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                  <a href="#">Datos</a>
+                </li>
+              </ul>
+            </div>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header text-white" style="border-radius: 0.5rem 0.5rem 0 0; background-color:rgb(3, 36, 72);">
+                    <h4 class="mb-0">Editar Perfil</h4>
+                </div>
+                <div class="card-body">
+                    <form id="editarPerfilForm" method="POST" action="">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ user.nombre }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="correo" class="form-label">Correo electrónico</label>
+                            <input type="email" class="form-control" id="correo" name="correo" value="{{ user.correo }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rol" class="form-label">Rol</label>
+                            <select class="form-select" id="rol" name="rol" required>
+                                <option value="admin" {% if user.rol == "admin" %}selected{% endif %}>Administrador</option>
+                                <option value="tecnico" {% if user.rol == "tecnico" %}selected{% endif %}>Técnico</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nueva_contraseña" class="form-label">Nueva contraseña</label>
+                            <input type="password" class="form-control" id="nueva_contraseña" name="nueva_contraseña" placeholder="Dejar en blanco para no cambiar">
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmar_contraseña" class="form-label">Confirmar nueva contraseña</label>
+                            <input type="password" class="form-control" id="confirmar_contraseña" name="confirmar_contraseña" placeholder="Dejar en blanco para no cambiar">
+                        </div>
+                        <div class="mb-3 text-end">
+                            <button type="submit" class="btn btn-success">Guardar cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

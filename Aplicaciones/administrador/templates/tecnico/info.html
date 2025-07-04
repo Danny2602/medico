@@ -1,0 +1,234 @@
+{% extends 'plantilla2.html' %}
+{% load static %}
+
+{% block body %}
+
+<div class="container">
+    <div class="page-inner">
+        <div class="page-header">
+            <button class="btn btn-primary btn-round mb-3" onclick="history.back()">
+                <i class="fa fa-arrow-left"></i> Volver
+            </button>
+            <ul class="breadcrumbs mb-3">
+                <li class="nav-home">
+                    <a href="{% url 'inicio2' %}">
+                        <i class="icon-home"></i>
+                    </a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Tabla</a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Datos</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-title mb-0">Información del equipo</div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-lg-6 mb-4 mb-lg-0">
+                        <h2>Información del equipo: <span id="info-nombre">{{ equipo.nombre }}</span></h2>
+                        <ul>
+                            <li>Tipo: <span id="info-tipo">{{ equipo.tipo }}</span></li>
+                            <li>Marca: <span id="info-marca">{{ equipo.marca }}</span></li>
+                            <li>Modelo: <span id="info-modelo">{{ equipo.modelo }}</span></li>
+                            <li>Serie: <span id="info-serie">{{ equipo.serie }}</span></li>
+                            <li>Ubicación: <span id="info-ubicacion">{{ equipo.ubicacion }}</span></li>
+                            <li>Fecha de adquisición: <span id="info-fecha">{{ equipo.fecha_adquisicion|date:"Y-m-d" }}</span></li>
+                            <li>Estado:
+                                <span id="info-estado">
+                                    {% if equipo.estado_operativo == "Activo" %}
+                                    <span class="badge bg-success">Activo</span>
+                                    {% elif equipo.estado_operativo == "Inactivo" %}
+                                    <span class="badge bg-secondary">Inactivo</span>
+                                    {% elif equipo.estado_operativo == "En reparación" %}
+                                    <span class="badge bg-warning text-dark">En reparación</span>
+                                    {% elif equipo.estado_operativo == "Obsoleto" %}
+                                    <span class="badge bg-dark">Obsoleto</span>
+                                    {% elif equipo.estado_operativo == "Retirado" %}
+                                    <span class="badge bg-danger">Retirado</span>
+                                    {% else %}
+                                    <span class="badge bg-light text-dark">{{ equipo.estado_operativo }}</span>
+                                    {% endif %}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <h5>Resumen de mantenimientos</h5>
+                        <select id="filtroGraficaMantenimiento" class="form-select form-select-sm mb-2" style="max-width: 250px;">
+                        <option value="tipo">Por tipo</option>
+                        <option value="realizada">Por estado de realización</option>
+                        </select>
+                        <div style="height: 300px;">
+                            <canvas id="graficaMantenimiento"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center" style="background-color:rgb(6, 62, 117); border-radius: 0.5rem 0.5rem 0 0;">
+                        <div class="card-title mb-0" style="color: white;">Mantenimiento</div>
+                    </div>
+                    <div class="card-body">
+                        <table 
+                        id="mantenimientoTable"
+                        class="display table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tipo</th>
+                                    <th>Fecha programada</th>
+                                    <th>Fecha realizada</th>
+                                    <th>Responsable</th>
+                                    <th>Observaciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                        
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center" style="background-color:rgb(3, 33, 62); border-radius: 0.5rem 0.5rem 0 0;">
+                        <div class="card-title mb-0" style="color: white;">Historia de Operatividad</div>
+                    </div>
+                    <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table 
+                        id="historialTable"
+                        class="display table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Fecha y hora</th>
+                                    <th>Estado operativo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                        
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+
+
+
+<!-- Modal editar mantenimiento -->
+<div class="modal fade" id="editMantenimiento" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title">
+          <span class="fw-mediumbold">Detalle</span>
+          <span class="fw-light"> del mantenimiento </span>
+        </h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="small">
+            Información del mantenimiento del equipo.
+        </p>
+        <div class="row">
+            <div class="col-md-12 mb-2">
+                <input type="hidden" id="infoIdMantenimiento">
+            </div>
+          <div class="col-md-12 mb-2">
+            <b>Tipo:</b> <span id="infoTipoMantenimiento"></span>
+          </div>
+          <div class="col-md-12 mb-2">
+            <b>Fecha Programada:</b> <span id="infoFechaProgramada"></span>
+          </div>
+          <div class="col-md-12 mb-2">
+            <b>Fecha Realizada:</b> <span id="infoFechaRealizada"></span>
+          </div>
+          <div class="col-md-12 mb-2">
+            <b>Técnico Responsable:</b> <span id="infoTecnico"></span>
+          </div>
+          <div class="col-md-12 mb-2">
+            <b>Observaciones:</b> <span id="infoObservaciones"></span>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-success d-none" id="marcarRealizadaBtn" data-id="">Marcar como realizada</button>
+          <button type="button" class="btn btn-warning d-none" id="marcarNoRealizadaBtn" data-id="">Marcar como no realizada</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Modal para añadir historial de operatividad -->
+<div class="modal fade" id="addHistorial" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header border-0">
+            <h5 class="modal-title">
+            <span class="fw-mediumbold"> Añadir</span>
+            <span class="fw-light"> historial de operatividad </span>
+            </h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p class="small">
+                Añade un nuevo registro de operatividad al equipo.
+            </p>
+            <form id="addHistorialForm" novalidate>
+            <div class="row">
+                <input type="hidden" id="equipoId" name="equipoId" value="{{ equipo.id }}">
+                <div class="col-md-12">
+                    <div class="form-group form-group-default">
+                        <label>Fecha y Hora</label>
+                        <input id="fechaHora" name="fechaHora" type="datetime-local" class="form-control" required />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                <div class="form-group form-group-default">
+                    <label>Estado Operativo</label>
+                    <select class="form-select" id="estadoOperativo" name="estadoOperativo" required>
+                        <option value="">Selecciona un estado</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                        <option value="En reparación">En reparación</option>
+                        <option value="Obsoleto">Obsoleto</option>
+                        <option value="Retirado">Retirado</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="submit" id="addHistorialButton" class="btn btn-primary">Añadir</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </form>
+    </div>
+</div>
+    </div>
+</div>
+</div>
+
+
+{% endblock %}

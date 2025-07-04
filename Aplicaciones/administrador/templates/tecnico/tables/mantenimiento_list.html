@@ -1,0 +1,32 @@
+{% for mantenimiento in mantenimientos %}
+<tr>
+    <td>
+        <a
+            href="{% url 'equipo_info' %}?id={{ mantenimiento.id }}"
+            class="btn btn-link btn-danger edit-mantenimiento"
+            title="Ver información"
+            data-id="{{ mantenimiento.id }}"
+            data-bs-toggle="modal"
+            data-bs-target="#editMantenimiento"
+        >
+            <i class="far fa-question-circle" style="color: #007bff;"></i>
+        </a>
+    </td>
+    <td>
+        {% if mantenimiento.tipo == "Preventivo" %}
+            <span class="badge" style="background-color: #1d7af3;">Preventivo</span>
+        {% elif mantenimiento.tipo == "Correctivo" %}
+            <span class="badge" style="background-color: #f3545d;">Correctivo</span>
+        {% elif mantenimiento.tipo == "Predictivo" %}
+            <span class="badge" style="background-color: #fdaf4b; color: #212529;">Predictivo</span>
+        {% else %}
+            <span class="badge bg-secondary">{{ mantenimiento.tipo }}</span>
+        {% endif %}
+    </td>
+    <td>{{ mantenimiento.fecha_programada }}</td>
+    <td>{{ mantenimiento.fecha_realizada|default:'No realizada' }}</td>
+    <td>{{ mantenimiento.tecnico }}</td>
+    <td>{{ mantenimiento.observaciones }}</td>
+</tr>
+
+{% endfor %}

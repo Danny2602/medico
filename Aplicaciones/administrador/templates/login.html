@@ -1,0 +1,220 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+  <title>Medico - Iniciar sesión</title>
+
+  <!-- Fonts and icons -->
+  <script src="{% static 'styles/assets/js/plugin/webfont/webfont.min.js' %}"></script>
+  <script>
+    WebFont.load({
+      google: { families: ["Public Sans:300,400,500,600,700"] },
+      custom: {
+        families: [
+          "Font Awesome 5 Solid",
+          "Font Awesome 5 Regular",
+          "Font Awesome 5 Brands",
+          "simple-line-icons",
+        ],
+        urls: ["{% static 'styles/assets/css/fonts.min.css' %}"],
+      },
+      active: function () {
+        sessionStorage.fonts = true;
+      },
+    });
+  </script>
+
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="{% static 'styles/assets/css/bootstrap.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'styles/assets/css/plugins.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'styles/assets/css/kaiadmin.min.css' %}" />
+
+  <!-- Fondo animado y burbujas -->
+  <style>
+    body.login-bg-animated {
+      min-height: 100vh;
+      background: linear-gradient(-45deg, #6a11cb, #2575fc, #43cea2, #185a9d);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      position: relative;
+      overflow: hidden;
+    }
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+    .bubble {
+      position: absolute;
+      bottom: -100px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: bubbleUp 20s linear infinite;
+      z-index: 1;
+    }
+    @keyframes bubbleUp {
+      0% {transform: translateY(0);}
+      100% {transform: translateY(-120vh);}
+    }
+    .bubble1 { left: 10%; width: 60px; height: 60px; animation-delay: 0s;}
+    .bubble2 { left: 30%; width: 40px; height: 40px; animation-delay: 3s;}
+    .bubble3 { left: 50%; width: 80px; height: 80px; animation-delay: 6s;}
+    .bubble4 { left: 70%; width: 50px; height: 50px; animation-delay: 9s;}
+    .bubble5 { left: 90%; width: 30px; height: 30px; animation-delay: 12s;}
+    .wrapper, .container { position: relative; z-index: 2; }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="{% static 'styles/assets/js/core/jquery-3.7.1.min.js' %}"></script>
+</head>
+<body class="login-bg-animated">
+  <!-- Burbujas animadas -->
+  <div class="bubble bubble1"></div>
+  <div class="bubble bubble2"></div>
+  <div class="bubble bubble3"></div>
+  <div class="bubble bubble4"></div>
+  <div class="bubble bubble5"></div>
+
+  <div class="wrapper">
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+      <div class="card card-login shadow-lg" style="width: 100%; max-width: 400px;">
+        <div class="card-body">
+          <h3 class="text-center mb-4">Ingreso al sistema</h3>
+          <!-- Login Form -->
+          <form id="loginForm" method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+              <label for="username" class="form-label">Correo electrónico</label>
+              <input type="email" id="username" name="username" class="form-control" placeholder="Ingrese su correo" required>
+            </div>
+            <div class="form-group mb-3">
+              <label for="password" class="form-label">Contraseña</label>
+              <input type="password" id="password" name="password" class="form-control" placeholder="Ingrese su contraseña" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" style="width: 100%;">Ingresar</button>
+            {% comment %} <div class="text-center mt-3">
+              <a href="#" class="text-muted">¿Olvidó su contraseña?</a>
+            </div> {% endcomment %}
+            <div class="text-center mt-3">
+              <a href="#" id="showRegister" class="text-primary">Regístrame</a>
+            </div>
+          </form>
+          <!-- Registro Formulario (oculto por defecto) -->
+          <form id="registerForm" method="POST" style="display:none;">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ingrese su nombre" required>
+            </div>
+            <div class="form-group mb-3">
+              <label for="correo" class="form-label">Correo electrónico</label>
+              <input type="email" id="correo" name="correo" class="form-control" placeholder="Ingrese su correo" required>
+            </div>
+            <div class="form-group mb-3">
+              <label for="rol" class="form-label">Rol</label>
+              <select id="rol" name="rol" class="form-control" required>
+                <option value="">Seleccione un rol</option>
+                <option value="admin">Administrador</option>
+                <option value="tecnico">Técnico</option>
+              </select>
+            </div>
+            <div class="form-group mb-3">
+              <label for="contraseña" class="form-label">Contraseña</label>
+              <input type="password" id="contraseña" name="contraseña" class="form-control" placeholder="Ingrese su contraseña" required>
+            </div>
+            <div class="form-group mb-3">
+              <label for="confirmar_contraseña" class="form-label">Confirmar contraseña</label>
+              <input type="password" id="confirmar_contraseña" name="confirmar_contraseña" class="form-control" placeholder="Confirme su contraseña" required>
+            </div>
+            <button type="submit" class="btn btn-success btn-block">Registrarme</button>
+            <div class="text-center mt-3">
+              <a href="#" id="showLogin" class="text-primary">¿Ya tienes cuenta? Inicia sesión</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register("{% static 'service-worker.js' %}")
+        .then(() => console.log('Service Worker registrado'))
+        .catch((error) => console.error('Error al registrar el Service Worker:', error));
+    }
+
+    // Efecto deslizante para mostrar/ocultar formularios
+    $(document).ready(function () {
+      $('#showRegister').click(function(e) {
+        e.preventDefault();
+        $('#loginForm').slideUp(300, function() {
+          $('#registerForm').slideDown(300);
+        });
+      });
+      $('#showLogin').click(function(e) {
+        e.preventDefault();
+        $('#registerForm').slideUp(300, function() {
+          $('#loginForm').slideDown(300);
+        });
+      });
+
+      // Registro AJAX con validaciones y SweetAlert
+      $('#registerForm').on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+          url: "{% url 'registro' %}",
+          method: "POST",
+          data: $(this).serialize(),
+          success: function(response) {
+            if (response.status === 'success') {
+              Swal.fire({
+                icon: 'success',
+                title: '¡Registro exitoso!',
+                text: response.message,
+                confirmButtonColor: '#3085d6'
+              }).then(() => {
+                $('#registerForm').slideUp(300, function() {
+                  $('#loginForm').slideDown(300);
+                });
+              });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: response.message,
+                confirmButtonColor: '#3085d6'
+              });
+            }
+          },
+          error: function(xhr) {
+            let msg = "Error en el registro.";
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+              msg = xhr.responseJSON.message;
+            }
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: msg,
+              confirmButtonColor: '#3085d6'
+            });
+          }
+        });
+      });
+    });
+
+    // SweetAlert para error de login
+    {% if error %}
+    Swal.fire({
+      icon: 'error',
+      title: 'Error de inicio de sesión',
+      text: '{{ error }}',
+      confirmButtonColor: '#3085d6'
+    });
+    {% endif %}
+  </script>
+</body>
+</html>

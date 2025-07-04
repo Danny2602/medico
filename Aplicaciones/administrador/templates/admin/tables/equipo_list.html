@@ -1,0 +1,38 @@
+{% for equipo in equipos %}
+<tr>
+    <td style>
+        <a
+            href="{% url 'equipo_info' %}?id={{ equipo.id }}"
+            class="btn btn-link btn-danger info-mantenimiento"
+            data-bs-toggle="tooltip"
+            title="Ver información"
+            data-id="{{ equipo.id }}"
+        >
+            <i class="far fa-question-circle" style="color: #007bff;"></i>
+        </a>
+    </td>
+    <td>{{ equipo.nombre }}</td>
+    <td>{{ equipo.tipo }}</td>
+    <td>{{ equipo.marca }}</td>
+    <td>{{ equipo.modelo }}</td>
+    <td>{{ equipo.serie }}</td>
+    <td>{{ equipo.ubicacion }}</td>
+    <td>{{ equipo.fecha_adquisicion|date:"Y-m-d" }}</td>
+    <td>
+        {% if equipo.estado_operativo == "Activo" %}
+            <span class="badge" style="background-color: #28a745; color: white;">Activo</span>
+        {% elif equipo.estado_operativo == "Inactivo" %}
+            <span class="badge" style="background-color: #6c757d; color: white;">Inactivo</span>
+        {% elif equipo.estado_operativo == "En reparación" %}
+            <span class="badge" style="background-color: #ffc107; color: black;">En reparación</span>
+        {% elif equipo.estado_operativo == "Obsoleto" %}
+            <span class="badge" style="background-color: #343a40; color: white;">Obsoleto</span>
+        {% elif equipo.estado_operativo == "Retirado" %}
+            <span class="badge" style="background-color: #dc3545; color: white;">Retirado</span>
+        {% else %}
+            <span class="badge bg-light text-dark">{{ equipo.estado_operativo }}</span>
+        {% endif %}
+    </td>
+</tr>
+
+{% endfor %}
