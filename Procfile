@@ -1,1 +1,1 @@
-web: gunicorn medico.wsgi
+web: python manage.py migrate && gunicorn medico.wsgi
